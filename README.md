@@ -2,7 +2,7 @@
 <h3 align="center">A passionate ASP.NET developer from Bangladesh</h3>
 
 
-- 🔭 I’m currently working on **ASP.NET Core**
+
   
 - 🔭 I’m currently working on  <a href="http://118.179.198.198:8282/" target="_blank" rel="noreferrer">HRM System</a>
 
