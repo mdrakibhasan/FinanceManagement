@@ -1,7 +1,17 @@
 ﻿@{
     ViewBag.Title = "Home Page";
 }
+<script type="text/javascript">
+    // Get the token from Razor ViewBag and store it in localStorage
+    var token = '@ViewBag.Token';
 
+    if (token) {
+        localStorage.setItem("token", token);
+        console.log("Token stored in localStorage:", token);
+    } else {
+        console.error("Token not found.");
+    }
+</script>
 <div class="jumbotron">
     <h1>ASP.NET</h1>
     <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>

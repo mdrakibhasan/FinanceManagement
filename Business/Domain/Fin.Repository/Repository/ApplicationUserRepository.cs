@@ -22,20 +22,21 @@ namespace Pos.Repository.Repository
         private readonly IMapper _mapper;
         private readonly PosDbContext _dbContext;
         private readonly IConfiguration _configuration;
-
-
+        List<Login> LoginInfo =new List<Login>();
+       
         public ApplicationUserRepository(IMapper mapper, PosDbContext dbContext, IConfiguration configuration) 
         {
             _configuration = configuration;
              _dbContext = dbContext;
             _mapper = mapper;
+            LoginInfo.Add(new Login { Password = "1234", Username = "admin" });
         }
 
         public async Task<LoginResponse> UserLogin(string username, string password)
         {
-            //var result = await _signInManager.PasswordSignInAsync(username, password, isPersistent: true, lockoutOnFailure: false);
+            var result = LoginInfo.Find(a=>a.Username==username && a.Password==password);
 
-            //if (result.Succeeded)
+            if (result!=null)
             {
                 string SecretKey = _configuration["AppSettings:Secret"];
                 _ = int.TryParse(_configuration["JWT:TokenValidityInMinutes"], out int AccessTokenValidityInMinutes);

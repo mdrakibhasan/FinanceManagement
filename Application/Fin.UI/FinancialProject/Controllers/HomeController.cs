@@ -10,6 +10,7 @@ namespace financemanagement.Controllers
     {
         public ActionResult Index()
         {
+            ViewBag.Token = Session["token"];
             return View();
         }
 
