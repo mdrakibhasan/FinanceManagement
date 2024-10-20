@@ -1,0 +1,29 @@
+﻿
+@{
+    ViewBag.Title = "Log in";
+}
+
+<h2>@ViewBag.Title.</h2>
+<form id="loginForm">
+    <input type="text" id="username" placeholder="Username" />
+    <input type="password" id="password" placeholder="Password" />
+    <button type="submit">Login</button>
+</form>
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+<script>
+    $("#loginForm").submit(function (event) {
+        event.preventDefault();
+        $.ajax({
+            url: 'http://localhost:25869/api/ApplicationUser/Login?username=' + $("#username").val() + '&password=' + $("#password").val(),
+            type: 'POST',            
+            success: function (response) {
+                console.log("response", response)
+                localStorage.setItem("token", response.refreshToken);
+            }
+        });
+    });
+</script>
+}

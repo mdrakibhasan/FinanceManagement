@@ -1,0 +1,158 @@
+﻿@model Fin.VM.VmAccountsHead
+
+@{
+    ViewBag.Title = "Chart Of Accounts";
+}
+
+<h2>Create</h2>
+<style>
+    #tree ul {
+        list-style-type: none; /* Remove default bullets */
+        margin-left: 20px;
+    }
+
+    #tree li {
+        margin: 5px 0;
+        cursor: pointer;
+    }
+
+        #tree li::before {
+            content: "• "; /* Add a bullet manually */
+            color: #000;
+        }
+</style>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+<div class="row">
+    <div class="col-md-6">
+
+        <button type="button" id="toggleAll">Toggle All</button>
+        <div id="tree"></div>
+
+    </div>
+    <div class="col-md-6">
+        <div class="form-horizontal">
+            <h4>Coa Setup</h4>
+            <hr />
+            @Html.ValidationSummary(true)
+            <div class="form-group">
+
+                <input type="hidden" id="Id" name="Id" />
+                @Html.Label("COA Name", htmlAttributes: new { @class = "control-label" })
+
+                @Html.TextBoxFor(m => m.HeadName, new { @class = "form-control" })
+
+                @Html.ValidationMessageFor(model => model.HeadName)
+
+            </div>
+
+            <div class="form-group">
+
+
+                @Html.Label("Select Root Or Leaf", htmlAttributes: new { @class = "control-label " })
+                <select id="RootLeaf" name="RootLeaf" class="form-control">
+                    <option value="R">Root</option>
+                    <option value="L">Leaf</option>
+
+                    @Html.ValidationMessageFor(model => model.RootLeaf)
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+                @Html.Label("Opening Amount", htmlAttributes: new { @class = "control-label" })
+
+                @Html.TextBoxFor(m => m.OpeningBal, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.OpeningBal)
+
+            </div>
+
+            <div class="form-group">
+                @Html.Label("Select Parent ", htmlAttributes: new { @class = "control-label " })
+
+
+                <select id="RootId" name="RootId" class="form-control">
+                    <option value="">Select an option</option>
+
+                    @Html.ValidationMessageFor(model => model.RootId)
+                </select>
+
+            </div>
+
+
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Code, htmlAttributes: new { @class = "control-label" })
+
+                @Html.TextBoxFor(m => m.Code, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Code)
+
+            </div>
+
+
+
+            <div class="form-group">
+                @Html.Label("Accounts Type", htmlAttributes: new { @class = "control-label " })
+
+                <select id="AccountsHeadTypeId" name="AccountsHeadTypeId" class="form-control">
+                    <option value="">Select an option</option>
+
+                    @Html.ValidationMessageFor(model => model.AccountsHeadTypeId)
+                </select>
+
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-8">
+                    <button type="button" id="btnSubmit" class="btn btn-primary">Submit</button>
+                    <button type="button" id="btnClear" class="btn btn-warning">Clear</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <p>
+        @Html.ActionLink("Back To List", "Index")
+    </p>
+</div>
+    
+}
+
+@section scripts
+{
+    <script src="~/Scripts/FormScript/coa.js"></script>
+    <script>$('.datepicker').datepicker({
+            format: 'yyyy-mm-dd',  // Set the desired date format (e.g., day/month/year)
+            autoclose: true,       // Automatically close the date picker after selecting a date
+            todayHighlight: true   // Highlight today's date
+        });</script>
+    <style>
+        .node-label {
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+            .node-label.collapsed::before {
+                content: "▶"; /* Arrow indicator for collapsed state */
+                margin-right: 5px;
+            }
+
+            .node-label::before {
+                content: "▼"; /* Arrow indicator for expanded state */
+                margin-right: 5px;
+            }
+
+        /* Hide all child <ul> elements if the collapseAll flag is true */
+        #tree ul {
+            list-style-type: none; /* Remove default bullets */
+            margin-left: 20px;
+            display: block; /* Hide by default if collapsed */
+        }
+
+        #tree li {
+            margin: 5px 0;
+        }
+    </style>
+}

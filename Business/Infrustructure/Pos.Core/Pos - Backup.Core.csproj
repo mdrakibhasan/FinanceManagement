@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="AutoMapper" Version="12.0.1" />
+		<PackageReference Include="JetBrains.Annotations" Version="2023.2.0" />
+
+		<PackageReference Include="FluentValidation" Version="11.6.0" />
+		<PackageReference Include="MediatR" Version="12.1.1" />
+	</ItemGroup>
+	
+	<ItemGroup>
+	  <ProjectReference Include="..\..\Domain\Pos.Model\Pos.Model.csproj" />
+	  <ProjectReference Include="..\..\Domain\Pos.Repository\Pos.Repository.csproj" />
+	  <ProjectReference Include="..\Pos.Service.Model\Pos.Service.Model.csproj" />
+	</ItemGroup>
+	
+	<ItemGroup>
+	  <Folder Include="Product\Command\" />
+	</ItemGroup>
+
+</Project>

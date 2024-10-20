@@ -1,0 +1,112 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<header>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+    <!-- Buttons Extension CSS and JS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
+</header>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table id="example" class="display" style="width:100%">
+    <thead>
+        <tr>
+            <th>Coa Name</th>
+            <th>Coa Type</th>
+            <th>Root/Leaf</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#example').DataTable({
+                "ajax": {
+                    "url": "http://localhost:25869/api/AccountsHead",  // Replace with your API endpoint
+                    "type": "GET",
+                    contentType: "application/json",
+                    "headers": {
+                        "Authorization": "Bearer " + localStorage.getItem("token")
+                    },
+                    "dataSrc": function (json) {
+                        return json.$values || json;  // Use .values if your data is in a $values array
+                    }
+                },
+                "columns": [
+                    { "data": "headName" },
+                    {
+                        "data": "headType",
+
+                    },
+                    { "data": "rootLeaf" },
+                    {
+                        "data": "id",  // Use the unique ID of the record for actions
+                        "render": function (data) {
+                            return `
+                                <button class="btn btn-danger delete-btn" data-id="${data}">Delete</button>`;
+                        }
+                    }
+
+                ],
+                "processing": true,   // Show loading indicator
+                "serverSide": false,  // Use client-side processing (set to true for large datasets)
+                "paging": true,       // Enable paging
+                "searching": true,    // Enable searching
+                "info": true,         // Show info about the table
+                "autoWidth": false,   // Disable auto width for better layout
+                "dom": 'Bfrtip',         // Add the button container to the DataTable
+                "buttons": [
+                    {
+                        extend: 'csvHtml5',
+                        text: 'Export CSV',
+                        title: 'Journal Voucher Export',  // Optional: Set the CSV filename
+                        className: 'btn btn-success'      // Optional: Add custom button class
+                    }
+                ]
+            });
+
+
+
+            $('#example').on('click', '.delete-btn', function () {
+                var id = $(this).data('id');
+                if (confirm('Are you sure you want to delete this voucher?')) {
+                    // Perform delete action using the ID
+                    $.ajax({
+                        url: 'http://localhost:25869/api/AccountTransaction?id=' + id,
+                        type: 'DELETE',
+                        "headers": {
+                            "Authorization": "Bearer " + localStorage.getItem("token")
+                        },
+                        success: function () {
+                            alert('Deleted successfully');
+                            $('#example').DataTable().ajax.reload(); // Reload DataTable after deletion
+                        }
+                    });
+                }
+            });
+        });
+
+    </script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+    <!-- Buttons Extension CSS and JS -->
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.flash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+}

@@ -1,0 +1,240 @@
+﻿@model Fin.VM.VmAccountTransactionMst
+
+
+<div class="form-horizontal">
+    <h4>Journal Voucher Entry</h4>
+    <hr />
+
+    <!-- Master Section -->
+    <div class="form-group">
+        @Html.Label("Voucher Date", new { @class = "control-label " })
+
+        @Html.TextBoxFor(model => model.VoucherDate, new { @class = "form-control datepicker", @tabindex = "3" })
+    </div>
+
+    <div class="form-group">
+        @Html.Label("Voucher No", new { @class = "control-label " })
+        @Html.TextBoxFor(m => m.VoucherNo, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.VoucherNo)
+    </div>
+
+    <div class="form-group">
+        @Html.Label("Manual Voucher No", new { @class = "control-label " })
+        @Html.TextBoxFor(m => m.ManualVoucherNo, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.ManualVoucherNo)
+    </div>
+
+    <hr />
+
+    <!-- Details Section -->
+    <h4>Voucher Details</h4>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Line No</th>
+                <th>Account Head</th>
+                <th>Particulars</th>
+                <th>Debit Amount</th>
+                <th>Credit Amount</th>
+            </tr>
+        </thead>
+        <tbody id="voucher-details">
+        </tbody>
+    </table>
+
+    <button type="button" id="add-row" class="btn btn-primary">Add Row</button>
+
+    <div class="form-group">
+        <div class="col-md-12">
+            <label for="totalDebited">Total Debited Amount:</label>
+            <input type="text" id="totalDebited" readonly class="form-control" />
+        </div>
+
+        <div class="col-md-12">
+            <label for="totalCredited">Total Credited Amount:</label>
+            <input type="text" id="totalCredited" readonly class="form-control" />
+        </div>
+    </div>
+    <div class="form-group">
+        <button type="button" id="btnSubmit" class="btn btn-primary">Submit</button>
+        <button type="button" id="btnClear" class="btn btn-warning">Clear</button>
+
+
+    </div>
+
+    <p>
+        @Html.ActionLink("Back To List", "Index")
+    </p>
+</div>
+
+@section Scripts {
+    <script>
+    $('.datepicker').datepicker({
+            format: 'yyyy-mm-dd',  // Set the desired date format (e.g., day/month/year)
+            autoclose: true,       // Automatically close the date picker after selecting a date
+            todayHighlight: true   // Highlight today's date
+        });</script>
+    <script type="text/javascript">
+        // Declare CoaList globally
+        var CoaList = [];
+        var line = 0;
+        $(document).ready(function () {
+            // Fetch dropdown options from API
+            $.ajax({
+                url: "http://localhost:25869/api/AccountsHead/GetOnlyChield",  // Replace with your API endpoint
+                type: "GET",
+                contentType: "application/json",
+                "headers": {
+                    "Authorization": "Bearer " + localStorage.getItem("token")
+                },
+                success: function (data) {
+                    console.log("Dropdown Data:", data.$values);
+                    CoaList = data.$values;
+                },
+                error: function (error) {
+                    console.log("Error fetching dropdown options:", error);
+                }
+            });
+
+            function calculateTotals() {
+                var totalDebit = 0;
+                var totalCredit = 0;
+
+                $('.debit-amount').each(function () {
+                    var value = parseFloat($(this).val()) || 0;
+                    totalDebit += value;
+                });
+
+                $('.credit-amount').each(function () {
+                    var value = parseFloat($(this).val()) || 0;
+                    totalCredit += value;
+                });
+
+                $("#totalDebited").val(totalDebit.toFixed(2));
+                $("#totalCredited").val(totalCredit.toFixed(2));
+            }
+
+            // Calculate totals on input change
+            $('.debit-amount, .credit-amount').on('input', function () {
+                calculateTotals();
+            });
+
+            // Add a new row for voucher details
+            $('#add-row').click(function () {
+                var dropdownOptions = '<option>-- Select --</option>';
+
+                // Dynamically populate dropdown from CoaList
+                CoaList.forEach(function (item) {
+                    dropdownOptions += `<option value="${item.id}">${item.headName}</option>`;
+                });
+                line = line + 1;
+                var newRow = `<tr>
+                            <td>`+ line + `</td>
+                            <td>
+                                <select class="form-control">
+                                    ${dropdownOptions}
+                                </select>
+                            </td>
+                            <td><input type="text" class="form-control" /></td>
+                            <td><input type="text" class="form-control debit-amount" /></td>
+                            <td><input type="text" class="form-control credit-amount" /></td>
+                          </tr>`;
+
+                $('#voucher-details').append(newRow);
+
+                // Rebind event listener for new inputs
+                $('.debit-amount, .credit-amount').off('input').on('input', function () {
+                    calculateTotals();
+                });
+            });
+            $('#btnClear').click(function (e) {
+
+                clearForm();
+            });
+            $('#btnSubmit').click(function (e) {
+                e.preventDefault(); // Prevent default form submission
+
+                // Collect master section data
+                var masterData = {
+                    VoucherDate: $('#VoucherDate').val(),
+                    VoucherNo: $('#VoucherNo').val(),
+                    VoucherType: 'J',
+                    TotalAmount: parseFloat($('#totalDebited').val()) || 0,
+                    ManualVoucherNo: $('#ManualVoucherNo').val(),
+                    CreditedAmount: parseFloat($('#totalCredited').val()) || 0,
+                    DebitedAmount: parseFloat($('#totalDebited').val()) || 0,
+                    AccountsDtl: [] // This will hold the details data
+                };
+
+                // Collect details section data (multiple rows)
+                $('#voucher-details tr').each(function () {
+                    var accountHeadId = $(this).find('select').val();
+                    var particulars = $(this).find('input[type="text"]').eq(0).val();
+                    var debitedAmount = parseFloat($(this).find('.debit-amount').val()) || 0;
+                    var creditedAmount = parseFloat($(this).find('.credit-amount').val()) || 0;
+
+                    if (accountHeadId && (debitedAmount > 0 || creditedAmount > 0)) {
+                        var detailData = {
+                            AccountsHeadId: accountHeadId,
+                            Particulars: particulars,
+                            DebitedAmount: debitedAmount,
+                            CreditedAmount: creditedAmount
+                        };
+                        masterData.AccountsDtl.push(detailData); // Add each row to the master object
+                    }
+                });
+                if (masterData.AccountsDtl.length<=1) {
+                    toastr.warning("Please Select minimum 2 Account Head", "Warning!!!");
+
+                    return;
+                }
+                if (masterData.VoucherDate == '') {
+                    toastr.warning("Please Input Voucher Date.", "Warning!!!");
+
+                    return;
+                }
+                // Validate total credited and debited amounts
+                if (masterData.CreditedAmount !== masterData.DebitedAmount) {
+                    toastr.warning("The credited and debited amounts must be equal.", "Warning!!!");
+
+                    return;
+                }
+                console.log("submit data", masterData);
+                // Post the data to the API
+                $.ajax({
+                    url: "http://localhost:25869/api/AccountTransaction", // Replace with your actual API endpoint
+                    type: "POST",
+                    contentType: "application/json",
+                    "headers": {
+                        "Authorization": "Bearer " + localStorage.getItem("token")
+                    },
+                    data: JSON.stringify(masterData),
+                    success: function (response) {
+
+                        toastr.success("Save Success.", "Success!!!");
+                        // Perform any success handling here (e.g., clear form, redirect)
+                        clearForm();
+                    },
+                    error: function (error) {
+                        alert("An error occurred while saving the voucher.");
+                        toastr.error("An error occurred while saving the voucher.", "error!!!");
+                        console.log(error);
+                    }
+                });
+            });
+
+            // Function to clear the form after submission
+            function clearForm() {
+                $('#VoucherDate').val('');
+                $('#VoucherNo').val('');
+                $('#ManualVoucherNo').val('');
+                $('#totalDebited').val('');
+                $('#totalCredited').val('');
+                $('#voucher-details').empty(); // Clear all rows in the details section
+            }
+        });
+
+
+    </script>
+}
+

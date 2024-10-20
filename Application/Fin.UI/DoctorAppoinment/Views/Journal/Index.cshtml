@@ -1,0 +1,89 @@
+﻿@model IEnumerable<Fin.VM.VmAccountTransactionMst>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table id="example" class="display" style="width:100%">
+    <thead>
+        <tr>
+            <th>Voucher No</th>
+            <th>Voucher Date</th>
+            <th>Total Amount</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#example').DataTable({
+                "ajax": {
+                    "url": "http://localhost:25869/api/AccountTransaction",  // Replace with your API endpoint
+                    "type": "GET",
+                    "datatype": "json",
+                    "headers": {
+                        "Authorization": "Bearer " + localStorage.getItem("token")
+                    },
+                    "dataSrc": function (json) {
+                        return json.$values || json;  // Use .values if your data is in a $values array
+                    }
+                },
+                "columns": [
+                    { "data": "voucherNo" },
+                    {
+                        "data": "voucherDate",
+                        "render": function (data) {  // Format the date
+                            var date = new Date(data);
+                            return date.toLocaleDateString();
+                        }
+                    },
+                    { "data": "totalAmount" },
+                    {
+                        "data": "id",  // Use the unique ID of the record for actions
+                        "render": function (data) {
+                            return `
+                            <button class="btn btn-danger delete-btn" data-id="${data}">Delete</button>`;
+                        }
+                    }
+                ],
+                "processing": true,   // Show loading indicator
+                "serverSide": false,  // Use client-side processing (set to true for large datasets)
+                "paging": true,       // Enable paging
+                "searching": true,    // Enable searching
+                "info": true,         // Show info about the table
+                "autoWidth": false    // Disable auto width for better layout
+            });
+
+            
+
+            // Handle delete button click
+            $('#example').on('click', '.delete-btn', function () {
+                var id = $(this).data('id');
+                if (confirm('Are you sure you want to delete this voucher?')) {
+                    // Perform delete action using the ID
+                    $.ajax({
+                        url: 'http://localhost:25869/api/AccountTransaction?id=' + id,
+                        type: 'DELETE',
+                        "headers": {
+                            "Authorization": "Bearer " + localStorage.getItem("token")
+                        },
+                        success: function () {
+                            alert('Deleted successfully');
+                            $('#example').DataTable().ajax.reload(); // Reload DataTable after deletion
+                        }
+                    });
+                }
+            });
+        });
+
+        </script>
+    }

@@ -1,0 +1,169 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+<header>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+    <!-- Buttons Extension CSS and JS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
+</header>
+<h2>Accounts Ladger Report</h2>
+</br>
+<div class="row">
+    <div class="col-md-3">
+        <div class="form-group">
+            @Html.Label("Select Account", new { @class = "control-label " })
+            <select id="head" name="head" class="form-control">
+                <option value="">Select an option</option>
+
+            </select>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="form-group">
+            @Html.Label("From Date", new { @class = "control-label " })
+            <input type="text" id="fromdate" name="fromdate" class="form-control datepicker" />
+
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="form-group">
+            @Html.Label("To Date", new { @class = "control-label " })
+            <input type="text" id="todate" name="todate" class="form-control datepicker" />
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-group">
+            <button type="button" id="btnSubmit" class="btn btn-primary">Search</button>
+           
+
+
+        </div>
+    </div>
+</div>
+<div class="row">
+    <table id="example" class="display" style="width:100%">
+        <thead>
+            <tr>
+                <th>Coa Name</th>
+                <th>Voucher No</th>
+                <th>Voucher Date</th>
+                <th>Particulars</th>
+                <th>Debited Amount</th>
+                <th>Credited Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+@section Scripts {
+    <script>
+        $('.datepicker').datepicker({
+            format: 'yyyy-mm-dd',  // Set the desired date format (e.g., day/month/year)
+            autoclose: true,       // Automatically close the date picker after selecting a date
+            todayHighlight: true   // Highlight today's date
+        });</script>
+    <script>
+        $(document).ready(function () {
+            $.ajax({
+                url: "http://localhost:25869/api/AccountsHead",  // Replace with your API endpoint
+                type: "GET",
+                contentType: "application/json",
+                "headers": {
+                    "Authorization": "Bearer " + localStorage.getItem("token")
+                },
+                success: function (data) {
+                    // Assuming 'data' is an array of objects like [{id: 1, name: 'Option 1'}, {id: 2, name: 'Option 2'}, ...]
+                    var dropdown = $("#head");
+                    dropdown.empty();  // Clear any existing options
+
+                    // Add a default option
+                    dropdown.append('<option value="">Select an option</option>');
+                    console.log("dd", data.$values);
+                    // Loop through the data and append options to the dropdown
+                    $.each(data.$values, function (key, entry) {
+                        dropdown.append($('<option></option>').attr('value', entry.id).text(entry.headName));
+                    });
+                },
+                error: function (error) {
+                    console.log("Error fetching dropdown options:", error);
+                }
+            });
+
+        });
+
+
+        $(document.body).on("click", "#btnSubmit", function () {
+            var vm = {};
+            var id = $("#head").val() == '' ? null : $("#head").val();
+            var fromdate = $("#fromdate").val() == '' ? null : $("#fromdate").val();
+            var todate = $("#todate").val() == '' ? null : $("#todate").val();
+            console.log("id", id);
+            if (id > 0) {
+                if ($.fn.DataTable.isDataTable('#example')) {
+                    $('#example').DataTable().clear().destroy();
+                }
+                $('#example').DataTable({
+                    "ajax": {
+                        "url": "http://localhost:25869/api/AccountTransaction/AccountHeadLadger/" + id + '?FromDate=' + fromdate + '&ToDate=' + todate,  // Replace with your API endpoint
+                        "type": "GET",
+                        "datatype": "json",
+                        "headers": {
+                            "Authorization": "Bearer " + localStorage.getItem("token")
+                        },
+                        "dataSrc": function (json) {
+                            return json.vmAccountLadgers.$values || json;  // Use .values if your data is in a $values array
+                        }
+                    },
+                    "columns": [
+                        { "data": "headName" },
+                        {
+                            "data": "voucherNo",
+
+                        }, {
+                            "data": "voucherDate",
+
+                        },
+                        { "data": "particulars" },
+                        { "data": "debitedAmount" },
+                        { "data": "creditedAmount" },
+
+
+                    ],
+                    "order": [[2, "asc"]],
+                    "processing": true,   // Show loading indicator
+                    "serverSide": false,  // Use client-side processing (set to true for large datasets)
+                    "paging": true,       // Enable paging
+                    "searching": true,    // Enable searching
+                    "info": true,         // Show info about the table
+                    "autoWidth": false,  // Disable auto width for better layout
+
+                    "dom": 'Bfrtip',         // Add the button container to the DataTable
+                    "buttons": [
+                        {
+                            extend: 'csvHtml5',
+                            text: 'Export CSV',
+                            title: 'Journal Voucher Export',  // Optional: Set the CSV filename
+                            className: 'btn btn-success'      // Optional: Add custom button class
+                        }
+                    ]
+                });
+
+            }
+
+        });
+    </script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+    <!-- Buttons Extension CSS and JS -->
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.flash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+}
