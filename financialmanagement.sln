@@ -29,6 +29,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fin.Configuration", "Busine
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fin.Service.Model", "Business\Infrustructure\Fin.Service.Model\Fin.Service.Model.csproj", "{D6DC35A4-3A48-42A2-B2F6-F1E04EEBE8B8}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Document", "Document", "{D728B571-B200-42B7-A3C6-28B9FE463590}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\Financialmanagement\Document\Technical project test  Doc.pdf = ..\..\Financialmanagement\Document\Technical project test  Doc.pdf
+		..\..\Primtech Fontant\Financial Project Video.mp4 = ..\..\Primtech Fontant\Financial Project Video.mp4
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
