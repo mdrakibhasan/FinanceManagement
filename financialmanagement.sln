@@ -5,7 +5,7 @@ VisualStudioVersion = 17.7.34031.279
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application", "{54FB8453-3CD3-4518-B723-6AA29BC82551}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fin.UI", "Application\Fin.UI\DoctorAppoinment\Fin.UI.csproj", "{81BEE340-37EE-425A-BAB2-D43129238515}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fin.UI", "Application\Fin.UI\FinancialProject\Fin.UI.csproj", "{81BEE340-37EE-425A-BAB2-D43129238515}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fin.BackEnd", "Application\Fin.BackEnd\Fin.BackEnd.csproj", "{8CC01E03-598E-497B-8A17-16E94831C2D5}"
 EndProject
