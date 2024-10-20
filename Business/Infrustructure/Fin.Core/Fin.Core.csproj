@@ -13,9 +13,9 @@
 	</ItemGroup>
 	
 	<ItemGroup>
-	  <ProjectReference Include="..\..\Domain\Pos.Model\Fin.Model.csproj" />
-	  <ProjectReference Include="..\..\Domain\Pos.Repository\Fin.Repository.csproj" />
-	  <ProjectReference Include="..\Pos.Service.Model\Fin.Service.Model.csproj" />
+	  <ProjectReference Include="..\..\Domain\Fin.Model\Fin.Model.csproj" />
+	  <ProjectReference Include="..\..\Domain\Fin.Repository\Fin.Repository.csproj" />
+	  <ProjectReference Include="..\Fin.Service.Model\Fin.Service.Model.csproj" />
 	</ItemGroup>
 
 </Project>

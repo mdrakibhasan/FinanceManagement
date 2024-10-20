@@ -9,7 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Pos.Shared\Fin.Shared.csproj" />
+    <ProjectReference Include="..\Fin.Shared\Fin.Shared.csproj" />
   </ItemGroup>
 
 </Project>

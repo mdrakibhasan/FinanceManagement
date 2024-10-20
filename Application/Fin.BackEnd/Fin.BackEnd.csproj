@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Business\Infrustructure\Pos.IoC.Configuration\Fin.Configuration.csproj" />
+    <ProjectReference Include="..\..\Business\Infrustructure\Fin.IoC.Configuration\Fin.Configuration.csproj" />
   </ItemGroup>
 
 </Project>

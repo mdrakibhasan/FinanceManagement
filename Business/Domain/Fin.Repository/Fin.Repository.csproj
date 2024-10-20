@@ -9,9 +9,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Infrustructure\Pos.Infrustructure\Fin.Infrustructure.csproj" />
-    <ProjectReference Include="..\..\Infrustructure\Pos.Service.Model\Fin.Service.Model.csproj" />
-    <ProjectReference Include="..\Pos.Model\Fin.Model.csproj" />
+    <ProjectReference Include="..\..\Infrustructure\Fin.Infrustructure\Fin.Infrustructure.csproj" />
+    <ProjectReference Include="..\..\Infrustructure\Fin.Service.Model\Fin.Service.Model.csproj" />
+    <ProjectReference Include="..\Fin.Model\Fin.Model.csproj" />
   </ItemGroup>
 
 </Project>

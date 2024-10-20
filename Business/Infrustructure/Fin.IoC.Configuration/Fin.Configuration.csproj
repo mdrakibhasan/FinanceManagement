@@ -15,8 +15,8 @@
 
 	</ItemGroup>
 	<ItemGroup>
-	  <ProjectReference Include="..\Pos.Core\Fin.Core.csproj" />
-	  <ProjectReference Include="..\Pos.Infrustructure\Fin.Infrustructure.csproj" />
+	  <ProjectReference Include="..\Fin.Core\Fin.Core.csproj" />
+	  <ProjectReference Include="..\Fin.Infrustructure\Fin.Infrustructure.csproj" />
 	</ItemGroup>
 
 </Project>
